@@ -2,7 +2,8 @@ import StringIO
 import unittest
 from datetime import datetime
 
-from generator import rfc2822time, Generator, SiteParser, Message
+from generators import rfc2822time, Generator
+from parsers import Message, SiteParser
 
 
 class TestSiteParser(SiteParser):
@@ -23,16 +24,6 @@ class TestSiteParser(SiteParser):
 
 class GeneratorTest(unittest.TestCase):
     generator = Generator(TestSiteParser())
-
-    def test_get_title(self):
-        self.assertEqual("Site Title", self.generator.get_title())
-
-    def test_get_url(self):
-        self.assertEqual("http://www.example.com", self.generator.get_url())
-
-    def test_last_messages(self):
-        messages = self.generator.get_messages()
-        self.assertEqual(1, len(messages))
 
     def test_write_xml(self):
         out = StringIO.StringIO()

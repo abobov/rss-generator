@@ -6,7 +6,7 @@ import urllib
 import urlparse
 from lxml import etree
 
-from generator import Message, ForumParser
+from parsers import Message, ForumParser
 
 
 def can_handle(url):

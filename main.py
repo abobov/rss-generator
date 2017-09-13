@@ -1,6 +1,6 @@
 import sys
 
-from generator import Generator
+from generators import Generator
 from plugins import load_plugins
 
 
