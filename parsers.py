@@ -1,8 +1,12 @@
+import requests
+import sys
 import urllib2
 from lxml import html
 
 
 class Message():
+    text = ''
+
     def __init__(self):
         pass
 
@@ -68,3 +72,12 @@ class ForumParser(SiteParser):
 
 class MediaParser(SiteParser):
     is_media_parser = True
+
+    def get_file_size(self, url):
+        try:
+            r = requests.head(url, allow_redirects=True)
+            if r.status_code == 200:
+                return r.headers['Content-Length']
+        except requests.exceptions.RequestException, e:
+            print >> sys.stderr, e
+        return None

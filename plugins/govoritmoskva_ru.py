@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 import datetime
 import re
-import requests
-import sys
 
 from parsers import Message, MediaParser
 
@@ -38,15 +36,6 @@ class GovorimoskvaRuParser(MediaParser):
             return self.base_url
         else:
             return r'%s?month=%d&year=%d' % (self.base_url, month, year)
-
-    def get_file_size(self, url):
-        try:
-            r = requests.head(url, allow_redirects=True)
-            if r.status_code == 200:
-                return r.headers['Content-Length']
-        except requests.exceptions.RequestException, e:
-            print >> sys.stderr, e
-        return None
 
     def episode_name(self, title, date):
         dow = date.strftime('%a')
