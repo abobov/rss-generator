@@ -26,7 +26,7 @@ class BankiRuForumParser(ForumParser):
             text = msg.xpath(r'.//div[@class="forum-post-text"]')[0]
 
             bank_msg = Message()
-            bank_msg.title = '%s: %s [%s]' % (self.get_title(), user, date)
+            bank_msg.title = user
             bank_msg.url = msg_url
             bank_msg.date = datetime.datetime.strptime(date, '%d.%m.%Y %H:%M')
             bank_msg.text = etree.tostring(text)
