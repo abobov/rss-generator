@@ -1,7 +1,15 @@
 import requests
-import sys
+import ssl
 import urllib2
 from lxml import html
+
+
+def create_url_opener():
+    context = ssl._create_unverified_context()
+    handler = urllib2.HTTPSHandler(context=context)
+    opener = urllib2.build_opener(handler)
+    opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
+    return opener
 
 
 class Message():
@@ -17,12 +25,11 @@ class SiteParser(object):
 
     def __init__(self, base_url):
         self.base_url = base_url
+        self.opener = create_url_opener()
 
     def parse_page(self, url):
         if url not in self.cache:
-            opener = urllib2.build_opener()
-            opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
-            page = opener.open(url)
+            page = self.opener.open(url)
             page = html.parse(page)
             self.cache[url] = page
         return self.cache[url]
@@ -75,9 +82,9 @@ class MediaParser(SiteParser):
 
     def get_file_size(self, url):
         try:
-            r = requests.head(url, allow_redirects=True)
+            r = requests.head(url, allow_redirects=True, verify=False)
             if r.status_code == 200:
                 return r.headers['Content-Length']
         except requests.exceptions.RequestException, e:
-            print >> sys.stderr, e
+            pass
         return None
