@@ -65,7 +65,7 @@ class GovorimoskvaRuParser(MediaParser):
             assert len(media) == 1, 'Should be only one media, by found: %d' % len(media)
             media_url = media[0].get('href')
             if not media_url.startswith('http'):
-                media_url = 'https://govoritmoskva.ru/' + media_url
+                media_url = 'http://govoritmoskva.ru/' + media_url
             size = self.get_file_size(media_url)
             if size is not None:
                 day = int(program.xpath(r'.//div[@class="time"]/span/text()')[0].split(' ')[0])
