@@ -2,6 +2,7 @@ import requests
 import ssl
 import urllib2
 from lxml import html
+from bs4 import UnicodeDammit
 
 
 def create_url_opener():
@@ -29,8 +30,10 @@ class SiteParser(object):
 
     def parse_page(self, url):
         if url not in self.cache:
-            page = self.opener.open(url)
-            page = html.parse(page)
+            content = self.opener.open(url).read()
+            doc = UnicodeDammit(content, is_html=True)
+            parser = html.HTMLParser(encoding=doc.original_encoding)
+            page = html.document_fromstring(content, parser=parser)
             self.cache[url] = page
         return self.cache[url]
 
