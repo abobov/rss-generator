@@ -23,7 +23,7 @@ class BankiRuForumParser(ForumParser):
             user = msg.xpath(r'.//div[@class="forum-user-name"]/a/@title')[0]
             date = msg.xpath(r'.//div[@class="forum-post-date"]/span/text()')[0]
             msg_url = msg.xpath(r'.//div[@class="forum-post-number"]/noindex/a/@href')[0]
-            text = msg.xpath(r'.//div[@class="forum-post-text"]')[0]
+            text = self.unwrap_links(msg.xpath(r'.//div[@class="forum-post-text"]')[0])
 
             bank_msg = Message()
             bank_msg.title = user
@@ -46,3 +46,12 @@ class BankiRuForumParser(ForumParser):
 
     def get_last_page(self, page):
         return page.xpath('(//li[@class="ui-pagination__item"])[last()]/a/text()')[0]
+
+    def unwrap_links(self, text):
+        away_prefix = '/away/?url='
+        for link in text.xpath(r'.//a'):
+            href = link.get('href')
+            if href.startswith(away_prefix):
+                real_href = href[len(away_prefix):]
+                link.set('href', urllib.unquote(real_href))
+        return text

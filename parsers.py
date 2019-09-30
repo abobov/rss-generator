@@ -53,7 +53,7 @@ class SiteParser(object):
 
 
 class ForumParser(SiteParser):
-    limit = 300
+    limit = 30
 
     def get_title(self):
         page = self.parse_page(self.base_url)
