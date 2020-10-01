@@ -3,25 +3,25 @@
 import datetime
 import re
 import sys
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from lxml import etree
 
 from parsers import Message, ForumParser
 
 RUS_MONTH = {
-    u'января': 1,
-    u'февраля': 2,
-    u'марта': 3,
-    u'апреля': 4,
-    u'мая': 5,
-    u'июня': 6,
-    u'июля': 7,
-    u'августа': 8,
-    u'сентября': 9,
-    u'октября': 10,
-    u'ноября': 11,
-    u'декабря': 12,
+    'января': 1,
+    'февраля': 2,
+    'марта': 3,
+    'апреля': 4,
+    'мая': 5,
+    'июня': 6,
+    'июля': 7,
+    'августа': 8,
+    'сентября': 9,
+    'октября': 10,
+    'ноября': 11,
+    'декабря': 12,
 }
 
 
@@ -51,7 +51,7 @@ class RedCircleComParser(ForumParser):
                 ad_msg.date = self.parse_date(date)
             except:
                 continue
-            ad_msg.text = etree.tostring(msg)
+            ad_msg.text = etree.tostring(msg, encoding='unicode')
 
             result.append(ad_msg)
         return result
@@ -63,10 +63,10 @@ class RedCircleComParser(ForumParser):
         return page.xpath(r'//title/text()')[0]
 
     def build_page_url(self, page_num):
-        url = urlparse.urlparse(self.base_url)
-        qs = urlparse.parse_qs(url.query)
+        url = urllib.parse.urlparse(self.base_url)
+        qs = urllib.parse.parse_qs(url.query)
         qs['p'] = page_num
-        url = url._replace(query=urllib.urlencode(qs, True))
+        url = url._replace(query=urllib.parse.urlencode(qs, True))
         return url.geturl()
 
     def get_last_page(self, page):
@@ -81,5 +81,5 @@ class RedCircleComParser(ForumParser):
         try:
             return datetime.datetime.strptime(parse_date, '%d.%m.%Y')
         except:
-            print >> sys.stderr, "Date parse error, input date: '%s'" % date
+            print("Date parse error, input date: '%s'" % date, file=sys.stderr)
             raise

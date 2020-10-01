@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 import datetime
 import re
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from lxml import etree
 
 from parsers import Message, ForumParser
+from functools import reduce
 
 
 def can_handle(url):
@@ -18,18 +19,18 @@ def get_parser(url, args):
 
 
 mon = {
-    u'янв': '01',
-    u'фев': '02',
-    u'мар': '03',
-    u'апр': '04',
-    u'май': '05',
-    u'июн': '06',
-    u'июл': '07',
-    u'авг': '08',
-    u'сен': '09',
-    u'окт': '10',
-    u'ноя': '11',
-    u'дек': '12',
+    'янв': '01',
+    'фев': '02',
+    'мар': '03',
+    'апр': '04',
+    'май': '05',
+    'июн': '06',
+    'июл': '07',
+    'авг': '08',
+    'сен': '09',
+    'окт': '10',
+    'ноя': '11',
+    'дек': '12',
 }
 
 
@@ -47,7 +48,7 @@ class BankiRuForumParser(ForumParser):
             bank_msg.title = '%s: %s' % (self.get_title(), user)
             bank_msg.url = self.__build_full_url(msg_url)
             bank_msg.date = self.__parse_date(date)
-            bank_msg.text = etree.tostring(text)
+            bank_msg.text = etree.tostring(text, encoding='unicode')
 
             result.append(bank_msg)
         return result
@@ -56,10 +57,10 @@ class BankiRuForumParser(ForumParser):
         return page.xpath(r'//h2/a/text()')[0]
 
     def build_page_url(self, page_num):
-        url = urlparse.urlparse(self.base_url)
-        qs = urlparse.parse_qs(url.query)
+        url = urllib.parse.urlparse(self.base_url)
+        qs = urllib.parse.parse_qs(url.query)
         qs['start'] = (page_num - 1) * 20
-        url = url._replace(query=urllib.urlencode(qs, True))
+        url = url._replace(query=urllib.parse.urlencode(qs, True))
         return url.geturl()
 
     def get_last_page(self, page):
@@ -71,4 +72,4 @@ class BankiRuForumParser(ForumParser):
         return datetime.datetime.strptime(date, '%d %m %Y, %H:%M')
 
     def __build_full_url(self, url_path):
-        return urlparse.urljoin(self.base_url, url_path)
+        return urllib.parse.urljoin(self.base_url, url_path)

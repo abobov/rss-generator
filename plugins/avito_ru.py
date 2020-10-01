@@ -3,26 +3,26 @@
 import datetime
 import re
 import sys
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from datetime import timedelta
 from lxml import etree
 
 from parsers import Message, ForumParser
 
 RUS_MONTH = {
-    u'января': 1,
-    u'февраля': 2,
-    u'марта': 3,
-    u'апреля': 4,
-    u'мая': 5,
-    u'июня': 6,
-    u'июля': 7,
-    u'августа': 8,
-    u'сентября': 9,
-    u'октября': 10,
-    u'ноября': 11,
-    u'декабря': 12,
+    'января': 1,
+    'февраля': 2,
+    'марта': 3,
+    'апреля': 4,
+    'мая': 5,
+    'июня': 6,
+    'июля': 7,
+    'августа': 8,
+    'сентября': 9,
+    'октября': 10,
+    'ноября': 11,
+    'декабря': 12,
 }
 
 
@@ -48,8 +48,8 @@ def date_rel(pattern, date, key):
 
 class AvitoRuParser(ForumParser):
     __replace_dates = [
-        (u'Сегодня', date_string()),
-        (u'Вчера', date_string(days=1)),
+        ('Сегодня', date_string()),
+        ('Вчера', date_string(days=1)),
     ]
 
     def get_messages_for_page(self, page, page_url=None):
@@ -69,7 +69,7 @@ class AvitoRuParser(ForumParser):
                 ad_msg.date = self.parse_date(date)
             except:
                 continue
-            ad_msg.text = etree.tostring(msg)
+            ad_msg.text = etree.tostring(msg, encoding='unicode')
 
             result.append(ad_msg)
         return result
@@ -81,10 +81,10 @@ class AvitoRuParser(ForumParser):
         return page.xpath(r'//title/text()')[0]
 
     def build_page_url(self, page_num):
-        url = urlparse.urlparse(self.base_url)
-        qs = urlparse.parse_qs(url.query)
+        url = urllib.parse.urlparse(self.base_url)
+        qs = urllib.parse.parse_qs(url.query)
         qs['p'] = page_num
-        url = url._replace(query=urllib.urlencode(qs, True))
+        url = url._replace(query=urllib.parse.urlencode(qs, True))
         return url.geturl()
 
     def get_last_page(self, page):
@@ -93,13 +93,13 @@ class AvitoRuParser(ForumParser):
     def parse_date(self, date):
         date = " ".join(date.split())
 
-        res = date_rel(u'(\d+) час(|а|ов) назад', date, 'hours')
+        res = date_rel('(\d+) час(|а|ов) назад', date, 'hours')
         if res:
             return res
-        res = date_rel(u'(\d+) минут(у|а|ы|) назад', date, 'minutes')
+        res = date_rel('(\d+) минут(у|а|ы|) назад', date, 'minutes')
         if res:
             return res
-        res = date_rel(u'(\d+) (день|дня|дней) назад', date, 'days')
+        res = date_rel('(\d+) (день|дня|дней) назад', date, 'days')
         if res:
             return res
 
@@ -111,5 +111,5 @@ class AvitoRuParser(ForumParser):
         try:
             return datetime.datetime.strptime(parse_date, '%d.%m %H:%M')
         except:
-            print >> sys.stderr, "Date parse error, input date: '%s'" % date
+            print("Date parse error, input date: '%s'" % date, file=sys.stderr)
             raise

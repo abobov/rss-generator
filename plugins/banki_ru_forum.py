@@ -1,7 +1,7 @@
 import datetime
 import re
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from lxml import etree
 
 from parsers import Message, ForumParser
@@ -29,7 +29,7 @@ class BankiRuForumParser(ForumParser):
             bank_msg.title = user
             bank_msg.url = msg_url
             bank_msg.date = datetime.datetime.strptime(date, '%d.%m.%Y %H:%M')
-            bank_msg.text = etree.tostring(text)
+            bank_msg.text = etree.tostring(text, encoding='unicode')
 
             result.append(bank_msg)
         return result
@@ -38,10 +38,10 @@ class BankiRuForumParser(ForumParser):
         return page.xpath(r'//h1[@class="topic-page__title"]/text()')[0]
 
     def build_page_url(self, page_num):
-        url = urlparse.urlparse(self.base_url)
-        qs = urlparse.parse_qs(url.query)
+        url = urllib.parse.urlparse(self.base_url)
+        qs = urllib.parse.parse_qs(url.query)
         qs['PAGEN_1'] = page_num
-        url = url._replace(query=urllib.urlencode(qs, True))
+        url = url._replace(query=urllib.parse.urlencode(qs, True))
         return url.geturl()
 
     def get_last_page(self, page):
@@ -53,5 +53,5 @@ class BankiRuForumParser(ForumParser):
             href = link.get('href')
             if href.startswith(away_prefix):
                 real_href = href[len(away_prefix):]
-                link.set('href', urllib.unquote(real_href))
+                link.set('href', urllib.parse.unquote(real_href))
         return text

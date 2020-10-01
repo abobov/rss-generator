@@ -1,6 +1,6 @@
 import time
 from email.utils import formatdate
-from xml.etree.ElementTree import tostring, SubElement, Element
+from xml.etree.ElementTree import SubElement, Element, ElementTree
 
 
 def rfc2822time(dt=None):
@@ -26,8 +26,7 @@ class Generator(object):
         self.__xml_write(rss, out)
 
     def __xml_write(self, rss, out):
-        out.write('<?xml version="1.0" encoding="%s"?>' % self.RSS_ENCODING)
-        out.write(tostring(rss).encode(self.RSS_ENCODING))
+        ElementTree(rss).write(out, encoding='unicode', xml_declaration=True)
 
     def __xml_item(self, channel, msg):
         item = SubElement(channel, 'item')

@@ -15,28 +15,28 @@ def get_parser(url, args):
 
 
 RUS_MONTH = {
-    u'января': 1,
-    u'февраля': 2,
-    u'марта': 3,
-    u'апреля': 4,
-    u'мая': 5,
-    u'июня': 6,
-    u'июля': 7,
-    u'августа': 8,
-    u'сентября': 9,
-    u'октября': 10,
-    u'ноября': 11,
-    u'декабря': 12,
+    'января': 1,
+    'февраля': 2,
+    'марта': 3,
+    'апреля': 4,
+    'мая': 5,
+    'июня': 6,
+    'июля': 7,
+    'августа': 8,
+    'сентября': 9,
+    'октября': 10,
+    'ноября': 11,
+    'декабря': 12,
 }
 
 RUS_DOW = {
-    'Mon': u'Пн',
-    'Tue': u'Вт',
-    'Wed': u'Ср',
-    'Thu': u'Чт',
-    'Fri': u'Пт',
-    'Sat': u'Сб',
-    'Sun': u'Вс',
+    'Mon': 'Пн',
+    'Tue': 'Вт',
+    'Wed': 'Ср',
+    'Thu': 'Чт',
+    'Fri': 'Пт',
+    'Sat': 'Сб',
+    'Sun': 'Вс',
 }
 
 
@@ -44,7 +44,7 @@ class SilverRuParser(MediaParser):
     def get_title(self):
         page = self.parse_page(self.base_url)
         title = page.xpath(r'//div[@class="blog"]//h3/text()')[0]
-        return title.replace(u'Выпуски программы', '').strip(u'«» ')
+        return title.replace('Выпуски программы', '').strip('«» ')
 
     def get_messages(self):
         podcasts = []

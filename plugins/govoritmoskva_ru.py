@@ -15,13 +15,13 @@ def get_parser(url, args):
 
 
 RUS_DOW = {
-    'Mon': u'Пн',
-    'Tue': u'Вт',
-    'Wed': u'Ср',
-    'Thu': u'Чт',
-    'Fri': u'Пт',
-    'Sat': u'Сб',
-    'Sun': u'Вс',
+    'Mon': 'Пн',
+    'Tue': 'Вт',
+    'Wed': 'Ср',
+    'Thu': 'Чт',
+    'Fri': 'Пт',
+    'Sat': 'Сб',
+    'Sun': 'Вс',
 }
 
 
@@ -29,7 +29,7 @@ class GovorimoskvaRuParser(MediaParser):
     def get_title(self):
         page = self.parse_page(self.base_url)
         title = page.xpath(r'//div[@class="oneProgramPage"]//h1/text()')[0]
-        return title.replace(u'(16+)', '').strip(u'«» ')
+        return title.replace('(16+)', '').strip('«» ')
 
     def get_broadcast_url(self, month=None, year=None):
         if month is None and year is None:

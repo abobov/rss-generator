@@ -19,7 +19,7 @@ class CrateAForumcomParser(ForumParser):
     page_size = 15
 
     def __parse_date(self, date):
-        date = date.strip(u'» ')
+        date = date.strip('» ')
         return datetime.datetime.strptime(date, '%B %d, %Y, %I:%M:%S %p')
 
     def get_messages_for_page(self, page, page_url=None):
@@ -36,7 +36,7 @@ class CrateAForumcomParser(ForumParser):
             bank_msg.title = '%s: %s' % (self.get_title(), user)
             bank_msg.url = msg_url
             bank_msg.date = date
-            bank_msg.text = etree.tostring(text)
+            bank_msg.text = etree.tostring(text, encoding='unicode')
 
             result.append(bank_msg)
         return result

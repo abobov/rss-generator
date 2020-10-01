@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 import datetime
 import re
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from lxml import etree
 
 from parsers import Message, ForumParser
+from functools import reduce
 
 
 def can_handle(url):
@@ -18,18 +19,18 @@ def get_parser(url, args):
 
 
 mon = {
-    u'января': '01',
-    u'февраля': '02',
-    u'марта': '03',
-    u'апреля': '04',
-    u'мая': '05',
-    u'июня': '06',
-    u'июля': '07',
-    u'августа': '08',
-    u'сентября': '09',
-    u'октября': '10',
-    u'ноября': '11',
-    u'декабря': '12',
+    'января': '01',
+    'февраля': '02',
+    'марта': '03',
+    'апреля': '04',
+    'мая': '05',
+    'июня': '06',
+    'июля': '07',
+    'августа': '08',
+    'сентября': '09',
+    'октября': '10',
+    'ноября': '11',
+    'декабря': '12',
 }
 
 
@@ -41,10 +42,10 @@ class ForumOnlinerByParser(ForumParser):
         return page.xpath('(//ul[contains(@class, "topic-pages-fastnav")]/li[not(@class)])[last()]/a/text()')[0]
 
     def build_page_url(self, page_num):
-        url = urlparse.urlparse(self.base_url)
-        qs = urlparse.parse_qs(url.query)
+        url = urllib.parse.urlparse(self.base_url)
+        qs = urllib.parse.parse_qs(url.query)
         qs['start'] = (page_num - 1) * 20
-        url = url._replace(query=urllib.urlencode(qs, True))
+        url = url._replace(query=urllib.parse.urlencode(qs, True))
         return url.geturl()
 
     def get_messages_for_page(self, page, page_url):
@@ -65,7 +66,7 @@ class ForumOnlinerByParser(ForumParser):
             bank_msg.title = '%s: %s [%s]' % (self.get_title(), user, date)
             bank_msg.url = msg_url
             bank_msg.date = datetime.datetime.strptime(date, '%d %m %Y %H:%M')
-            bank_msg.text = etree.tostring(text)
+            bank_msg.text = etree.tostring(text, encoding='unicode')
 
             result.append(bank_msg)
         return result

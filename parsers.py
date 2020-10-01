@@ -1,14 +1,17 @@
-import requests
 import ssl
-import urllib2
+import urllib.error
+import urllib.parse
+import urllib.request
+
+import requests
+from bs4.dammit import UnicodeDammit
 from lxml import html
-from bs4 import UnicodeDammit
 
 
 def create_url_opener():
     context = ssl._create_unverified_context()
-    handler = urllib2.HTTPSHandler(context=context)
-    opener = urllib2.build_opener(handler)
+    handler = urllib.request.HTTPSHandler(context=context)
+    opener = urllib.request.build_opener(handler)
     opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
     return opener
 
@@ -64,7 +67,7 @@ class ForumParser(SiteParser):
         m_count = 0
 
         last_page = self.get_page_count()
-        for page in xrange(last_page, 0, -1):
+        for page in range(last_page, 0, -1):
             if m_count >= self.limit:
                 self.messages = self.messages[-self.limit:]
                 break
@@ -88,6 +91,6 @@ class MediaParser(SiteParser):
             r = requests.head(url, allow_redirects=True, verify=False)
             if r.status_code == 200:
                 return r.headers['Content-Length']
-        except requests.exceptions.RequestException, e:
+        except requests.exceptions.RequestException as e:
             pass
         return None
