@@ -26,20 +26,32 @@ class CrateAForumcomParser(ForumParser):
         result = []
         msgs = page.xpath(r'//div[@class="post_wrapper"]')
         for msg in msgs:
-            user = msg.xpath(r'.//div[@class="poster"]/h4/a/text()')[0]
+            user = self.get_user(msg)
             date = msg.xpath(r'.//div[@class="keyinfo"]/div[@class="smalltext"]/text()')[1]
             date = self.__parse_date(date)
             msg_url = msg.xpath(r'.//div[@class="keyinfo"]/h5/a/@href')[0]
             text = msg.xpath(r'.//div[@class="post"]/*')[0]
 
-            bank_msg = Message()
-            bank_msg.title = '%s: %s' % (self.get_title(), user)
-            bank_msg.url = msg_url
-            bank_msg.date = date
-            bank_msg.text = etree.tostring(text, encoding='unicode')
+            result_msg = Message()
+            result_msg.title = '%s: %s' % (self.get_title(), user)
+            result_msg.url = msg_url
+            result_msg.date = date
+            result_msg.text = etree.tostring(text, encoding='unicode')
 
-            result.append(bank_msg)
+            result.append(result_msg)
         return result
+
+    def get_user(self, msg):
+        paths = [
+            r'.//div[@class="poster"]/h4/a/text()',
+            r'.//div[@class="poster"]/a/text()',
+            r'.//div[@class="poster"]/h4/text()',
+        ]
+        for path in paths:
+            posters = msg.xpath(path)
+            if posters:
+                return posters[0].strip()
+        return ""
 
     def get_page_title(self, page):
         topic = page.xpath(r'//*[@id="forumposts"]/div/h3/text()')[2]
