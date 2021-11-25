@@ -1,4 +1,8 @@
+#!/usr/bin/env python3
+import argparse
+import io
 import sys
+from contextlib import contextmanager
 
 from generators import Generator
 from plugins import load_plugins
@@ -12,19 +16,29 @@ def find_parser(url, args):
     raise Exception("No plugin for URL: %s" % url)
 
 
-def parse_args():
-    args_len = len(sys.argv)
-    if args_len > 1:
-        url = sys.argv[1]
+@contextmanager
+def smart_open(file=None):
+    if file and file != '-':
+        fd = io.open(file, mode="wb")
     else:
-        print("Arguments was: ", sys.argv)
-        raise Exception("First argument: URL")
-    args = args_len > 2 and sys.argv[2:]
-    return url, args
+        fd = sys.stdout.buffer
+    try:
+        yield fd
+    finally:
+        if fd is not sys.stdout.buffer:
+            fd.close()
 
 
 if __name__ == '__main__':
-    url, args = parse_args()
-    parser = find_parser(url, args)
+    arguments = argparse.ArgumentParser(description="Generate RSS for sites.")
+    arguments.add_argument("-o", "--output", default='-',
+                           help="output file name (default: stdout)")
+    arguments.add_argument("url", metavar="URL", help="site URL")
+    arguments.add_argument("parser_args", metavar="ARGS", nargs="*",
+                           help="parser specific arguments")
+    args = arguments.parse_args()
+
+    parser = find_parser(args.url, args.parser_args)
     generator = Generator(parser)
-    generator.write_xml(sys.stdout)
+    with smart_open(args.output) as fd:
+        generator.write_xml(fd)

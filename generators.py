@@ -26,7 +26,7 @@ class Generator(object):
         self.__xml_write(rss, out)
 
     def __xml_write(self, rss, out):
-        ElementTree(rss).write(out, encoding='unicode', xml_declaration=True)
+        ElementTree(rss).write(out, encoding='utf-8', xml_declaration=True)
 
     def __xml_item(self, channel, msg):
         item = SubElement(channel, 'item')
