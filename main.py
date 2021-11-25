@@ -17,6 +17,7 @@ def parse_args():
     if args_len > 1:
         url = sys.argv[1]
     else:
+        print("Arguments was: ", sys.argv)
         raise Exception("First argument: URL")
     args = args_len > 2 and sys.argv[2:]
     return url, args
