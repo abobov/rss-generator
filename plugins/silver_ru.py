@@ -58,10 +58,10 @@ class SilverRuParser(MediaParser):
 
     def __parse_podcast(self, podcast_url):
         p = self.parse_page(podcast_url)
-        media = p.xpath(r'.//div[@class="blog-detail"]//audio')
+        media = p.xpath(r'.//div[@class="blog-detail"]//div[@data-audio]')
         if len(media) == 0:
             return None
-        media_url = 'http://silver.ru%s' % media[0].get('src')
+        media_url = media[0].attrib['data-audio']
         size = self.get_file_size(media_url)
         if size is None:
             return None
